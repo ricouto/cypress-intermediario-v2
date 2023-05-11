@@ -5,6 +5,7 @@
   "main": "cypress.config.js",
   "scripts": {
     "test": "cypress run",
+    "testTreina": "cypress run cypress/e2e/criacaoProjeto.cy.js",
     "cy:open": "cypress open"
   },
   "repository": {
