@@ -17,7 +17,6 @@ describe('Suite Testando a funcionalidade de criação de projeto', () => {
     })
 
     it('#1 - Criacao de projeto', () => {
-
         cy.gui_createProject(projeto)
 
         cy.url().should('be.equal', `${Cypress.config('baseUrl')}/${Cypress.env('user_name')}/${projeto.nome}`)
@@ -27,9 +26,6 @@ describe('Suite Testando a funcionalidade de criação de projeto', () => {
         cy.get('div[class*="flash-notice"] > span').then(($span) => {
             let msgPadrao = `Project ${projeto.nome} was successfully created.`
             const msgNovoProjeto = $span.text().replace(/\'/g, '')
-
-            // cy.log(msgPadrao)
-            // cy.log(msgNovoProjeto)
 
             expect(msgNovoProjeto).to.contain(msgPadrao)
             expect(msgNovoProjeto).to.eq(msgPadrao)

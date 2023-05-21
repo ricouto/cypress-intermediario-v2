@@ -1,18 +1,50 @@
+// Cypress.Commands.add('login', (
+//     user = Cypress.env('user_name'),
+//     password = Cypress.env('user_password')
+// ) => {
+//     const login = () => {
+//         cy.visit('/users/sign_in')
+//         cy.get('[data-qa-selector="login_field"]').type(user)
+//         cy.get('[data-qa-selector="password_field"]').type(password, { log: false })
+//         cy.get('[data-qa-selector="sign_in_button"]').click()
+//     }
+//     login()
+// })
+
 Cypress.Commands.add('login', (
     user = Cypress.env('user_name'),
     password = Cypress.env('user_password'),
-) => {
+    { cacheSession = true } = {},
+  ) => {
     const login = () => {
-        cy.visit('/users/sign_in')
-        cy.get('[data-qa-selector="login_field"]').type(user)
-        cy.get('[data-qa-selector="password_field"]').type(password, { log: false })
-        cy.get('[data-qa-selector="sign_in_button"]').click()
+      cy.visit('/users/sign_in')
+  
+      cy.get("[data-qa-selector='login_field']").type(user)
+      cy.get("[data-qa-selector='password_field']").type(password, { log: false })
+      cy.get("[data-qa-selector='sign_in_button']").click()
     }
-    login()
-})
+  
+    const validate = () => {
+      cy.visit('/')
+      cy.location('pathname', { timeout: 1000 })
+        .should('not.eq', '/users/sign_in')
+    }
+  
+    const options = {
+      cacheAcrossSpecs: true,
+      validate,
+    }
+  
+    if (cacheSession) {
+      cy.session(user, login, options)
+    } else {
+      login()
+    }
+  })
 
 Cypress.Commands.add('logout', () => {
-    cy.get('a[class="header-user-dropdown-toggle"]')
+    cy.get('.header-user-dropdown-toggle')
+        .wait(250)
         .click()
 
     cy.get('a[data-qa-selector="sign_out_link"]')
@@ -22,13 +54,6 @@ Cypress.Commands.add('logout', () => {
 })
 
 Cypress.Commands.add('gui_createProject', projeto => {
-    // cy.get('li[data-track-label="new_dropdown"] > a')
-    //     .should('be.visible')
-    //     .click()
-    // cy.get('ul > li > a[class="qa-global-new-project-link"]')
-    //     .should('be.visible')
-    //     .click()
-
     cy.visit('/projects/new')
 
     cy.get('div[id="blank-project-name"] input[id*="project_name"]')
