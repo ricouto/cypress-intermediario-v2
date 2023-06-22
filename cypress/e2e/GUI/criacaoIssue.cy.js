@@ -1,14 +1,26 @@
 import { faker } from '@faker-js/faker'
 
-describe('Suite Testando a funcionalidade de criação de Issue', () => {
+const options = {env: {snapshotOnly: true} }
 
-    let nomeProjeto
+describe('Suite Testando a funcionalidade de criação de Issue', options, () => {
+
     const issue = {
         nome: `issue-${faker.name.firstName()}`,
         descricao: faker.random.words(8)
     }
 
+    const projeto = {
+        name: `projeto-${faker.datatype.uuid()}`,
+        description: faker.random.words(5)
+    }
+
     beforeEach(() => {
+        cy.api_removeProject()
+        cy.api_createProject(projeto).then(response => {
+            expect(response.status).to.equal(201)
+            expect(response.body.name).to.equal(projeto.name)
+            expect(response.body.description).to.equal(projeto.description)
+        })
         cy.login()
     })
 
@@ -17,12 +29,11 @@ describe('Suite Testando a funcionalidade de criação de Issue', () => {
     // })
 
     it('#1 - Criacao de Issue', () => {
-        //cy.gui_createProject(projeto)
+        //cy.visit('/root/projeto-50990648-4d08-4024-adab-ea0f2335cb6f/issues/new')
+        cy.visit(`/root/${projeto.name}/issues/new`)
 
-        cy.visit('/root/projeto-50990648-4d08-4024-adab-ea0f2335cb6f/issues/new')
-
-        cy.url().should('be.equal', `${Cypress.config('baseUrl')}/root/projeto-50990648-4d08-4024-adab-ea0f2335cb6f/issues/new`)
-        cy.contains('projeto-50990648-4d08-4024-adab-ea0f2335cb6f').should('be.visible')
+        cy.url().should('be.equal', `${Cypress.config('baseUrl')}/root/${projeto.name}/issues/new`)
+        cy.contains(projeto.name).should('be.visible')
 
         cy.get('#issue_title')
             .clear()

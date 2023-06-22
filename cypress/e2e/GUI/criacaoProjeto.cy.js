@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker'
 
-describe('Suite Testando a funcionalidade de criação de projeto', () => {
+const options = {env: {snapshotOnly: true} }
+
+describe('Suite Testando a funcionalidade de criação de projeto', options, () => {
 
     let nomeProjeto
     const projeto = {
@@ -9,6 +11,7 @@ describe('Suite Testando a funcionalidade de criação de projeto', () => {
     }
 
     beforeEach(() => {
+        cy.api_removeProject()
         cy.login()
     })
 
